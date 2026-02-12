@@ -37,4 +37,12 @@ class Film extends Model
     {
         return $this->belongsToMany(Actor::class, 'films_actors');
     }
+
+    /**
+     * I return the relationship with the producer of this film (one-to-one).
+     */
+    public function producer()
+    {
+        return $this->hasOne(Producer::class);
+    }
 }

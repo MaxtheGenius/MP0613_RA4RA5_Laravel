@@ -8,6 +8,7 @@ namespace Tests\Feature;
 
 use App\Models\Actor;
 use App\Models\Film;
+use App\Models\Producer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -193,5 +194,59 @@ class CinemaDatabaseTest extends TestCase
         $this->assertGreaterThanOrEqual(10, Film::count(), 'Enhancement: the films table must be seeded with at least 10 films (Faker).');
         $this->assertGreaterThanOrEqual(10, Actor::count(), 'Enhancement: the actors table must be seeded with at least 10 actors (Faker).');
         $this->assertGreaterThan(0, DB::table('films_actors')->count(), 'Enhancement: the films_actors table must have film-actor relations.');
+    }
+
+    /**
+     * Test case 11 (RA6): I verify that the producers table is created with correct format and one-to-one relationship with films.
+     */
+    public function test_11_verify_table_producers_is_created_with_correct_format_and_relationship(): void
+    {
+        $this->assertTrue(Schema::hasTable('producers'), 'The producers table must exist.');
+
+        $expectedColumns = ['id', 'film_id', 'name', 'company', 'country', 'created_at', 'updated_at'];
+        foreach ($expectedColumns as $column) {
+            $this->assertTrue(Schema::hasColumn('producers', $column), "The producers table must have the column {$column}.");
+        }
+
+        // Verify film_id is unique (one-to-one relationship)
+        $driver = DB::connection()->getDriverName();
+        if ($driver === 'mysql') {
+            $indexes = DB::select("
+                SELECT INDEX_NAME, COLUMN_NAME, NON_UNIQUE
+                FROM INFORMATION_SCHEMA.STATISTICS
+                WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = 'producers'
+                AND COLUMN_NAME = 'film_id'
+            ");
+            $hasUniqueIndex = false;
+            foreach ($indexes as $index) {
+                if ($index->NON_UNIQUE == 0) {
+                    $hasUniqueIndex = true;
+                    break;
+                }
+            }
+            $this->assertTrue($hasUniqueIndex, 'film_id must have a unique constraint for one-to-one relationship.');
+        }
+
+        // Verify foreign key exists
+        if ($driver === 'mysql') {
+            $foreignKeys = DB::select("
+                SELECT COLUMN_NAME, REFERENCED_TABLE_NAME
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE TABLE_SCHEMA = DATABASE()
+                AND TABLE_NAME = 'producers'
+                AND REFERENCED_TABLE_NAME = 'films'
+            ");
+            $this->assertGreaterThan(0, count($foreignKeys), 'There must be a foreign key from producers.film_id to films.id.');
+        }
+
+        // Test relationship: create a film and producer, verify one-to-one
+        Artisan::call('db:seed', ['--class' => 'Database\\Seeders\\FilmFakerSeeder']);
+        $film = Film::first();
+        $producer = Producer::factory()->create(['film_id' => $film->id]);
+        
+        $this->assertEquals($film->id, $producer->film_id, 'Producer must be linked to film via film_id.');
+        $this->assertNotNull($film->producer, 'Film must have a producer relationship.');
+        $this->assertEquals($producer->id, $film->producer->id, 'Film->producer must return the correct producer.');
     }
 }
