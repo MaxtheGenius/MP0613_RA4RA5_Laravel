@@ -53,9 +53,17 @@ Route::group(['prefix' => 'filmout'], function () {
 // GET endpoints share a consistent URL namespace. The route named 'actors' was added
 // to satisfy the requirement that the actor listing be accessible; it is registered
 // here (and not under 'filmout') so that the Actor module has its own entry point
-// for future features.
+// for future features. The FR2 route listActorsByDecade is also registered here so
+// that decade-based listings are exposed as a natural extension of the existing
+// actor listing feature.
 Route::group(['prefix' => 'actorout'], function () {
     Route::get('actors', [ActorController::class, 'listActors'])->name('actors');
+    Route::get('actors/decade/{year}', [ActorController::class, 'listActorsByDecade'])
+        // The name 'actors.byDecade' is used so that the FR2 feature can be linked from
+        // the welcome view via a dropdown; the 'validateYear' middleware is attached so
+        // that the selected decade is validated before the controller is executed.
+        ->name('actors.byDecade')
+        ->middleware('validateYear');
 });
 
 // Create route (POST) – add film feature. Diagram flow: POST filmin/film.

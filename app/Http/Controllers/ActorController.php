@@ -16,6 +16,8 @@ namespace App\Http\Controllers;
 
 // The Actor model is used so that all actor data is retrieved through Eloquent ORM and the list view is populated from the database.
 use App\Models\Actor;
+// Carbon is imported so that decade date ranges can be built in a robust and readable way when filtering actors by decade (FR2).
+use Carbon\Carbon;
 use Illuminate\View\View;
 
 class ActorController extends Controller
@@ -53,6 +55,35 @@ class ActorController extends Controller
         return $this->handleDatabaseQuery(function () {
             $title = 'All Actors';
             $actors = Actor::orderBy('surname')->orderBy('name')->get();
+            return view('actors.list', [
+                'actors' => $actors,
+                'title' => $title,
+            ]);
+        });
+    }
+
+    /**
+     * This action was introduced to implement FR2 (actor listing by decade) as
+     * an extension of the existing listing behaviour defined in FR1. Actors are
+     * filtered by the decade of their birthdate so that the same list view can
+     * be reused while adding decade-based filtering. The ValidateYear middleware
+     * is applied at the route level so that only allowed decade values reach
+     * this method, and the query is expressed entirely with Eloquent ORM to
+     * keep the implementation consistent with the rest of the module.
+     */
+    public function listActorsByDecade(int $year): View|\Illuminate\Http\RedirectResponse
+    {
+        return $this->handleDatabaseQuery(function () use ($year) {
+            $start = Carbon::create($year, 1, 1)->startOfDay();
+            $end = Carbon::create($year + 9, 12, 31)->endOfDay();
+
+            $title = "Actors born in the {$year}s";
+
+            $actors = Actor::whereBetween('birthdate', [$start, $end])
+                ->orderBy('surname')
+                ->orderBy('name')
+                ->get();
+
             return view('actors.list', [
                 'actors' => $actors,
                 'title' => $title,
