@@ -40,6 +40,38 @@
             </div>
         </div>
 
+        <!-- Actors by decade filter: this section was introduced so that FR2 can be initiated
+             directly from the welcome view, allowing users to select a decade and navigate to
+             the dedicated actor listing by decade while keeping the same visual style. -->
+        <div class="col-md-8 mb-5">
+            <div class="card-apple">
+                <h3 class="mb-3 text-center">Filter Actors by Decade of Birth</h3>
+                <form id="decade-form" method="GET" action="{{ url('actorout/actors/decade') }}">
+                    <div class="form-row align-items-end">
+                        <div class="col-md-8 form-group mb-3">
+                            <label for="decade" class="font-weight-bold ml-1">Select decade</label>
+                            <select id="decade" name="decade" class="form-control">
+                                {{-- The available options are restricted to the supported decades (1980–2020)
+                                     so that user input stays aligned with the validation rules enforced by
+                                     the ValidateYear middleware for the FR2 route. --}}
+                                <option value="">-- Select a decade --</option>
+                                <option value="1980">1980s</option>
+                                <option value="1990">1990s</option>
+                                <option value="2000">2000s</option>
+                                <option value="2010">2010s</option>
+                                <option value="2020">2020s</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 text-center mb-3">
+                            <button type="submit" class="btn-apple px-4 py-2" style="margin-top: 8px;">
+                                Show Actors
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Add Film Form -->
         <div class="col-md-8">
             <div class="card-apple">
@@ -107,4 +139,27 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function () {
+            const form = document.getElementById('decade-form');
+            if (!form) return;
+
+            form.addEventListener('submit', function (event) {
+                const select = document.getElementById('decade');
+                if (!select || !select.value) {
+                    // When no decade is selected, submission is cancelled so that the FR2 route
+                    // is not called with an empty or invalid parameter.
+                    event.preventDefault();
+                    return;
+                }
+
+                // The URL for the FR2 route is built dynamically so that the selected decade is
+                // passed as the {year} parameter expected by listActorsByDecade inside the
+                // actorout group, while keeping the form method as a simple GET request.
+                const baseUrl = "{{ url('actorout/actors/decade') }}";
+                this.action = baseUrl + '/' + encodeURIComponent(select.value);
+            });
+        })();
+    </script>
 @endsection
