@@ -4,6 +4,8 @@
  * @author Maxime Pol Marcet
  */
 
+// ActorController is imported so that the route named 'actors' can be bound to ActorController@listActors.
+use App\Http\Controllers\ActorController;
 use App\Http\Controllers\FilmController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +47,15 @@ Route::group(['prefix' => 'filmout'], function () {
     Route::get('films/dump', [FilmController::class, 'showFilmsDump'])->name('filmsDump');
     Route::get('sortFilms', [FilmController::class, 'sortFilms'])->name('sortFilms');
     Route::get('countFilms', [FilmController::class, 'countFilms'])->name('countFilms');
+});
+
+// Actor read routes are grouped under the 'actorout' prefix so that all actor-related
+// GET endpoints share a consistent URL namespace. The route named 'actors' was added
+// to satisfy the requirement that the actor listing be accessible; it is registered
+// here (and not under 'filmout') so that the Actor module has its own entry point
+// for future features.
+Route::group(['prefix' => 'actorout'], function () {
+    Route::get('actors', [ActorController::class, 'listActors'])->name('actors');
 });
 
 // Create route (POST) – add film feature. Diagram flow: POST filmin/film.
