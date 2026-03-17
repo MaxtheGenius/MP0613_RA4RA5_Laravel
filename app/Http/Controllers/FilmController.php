@@ -221,4 +221,29 @@ class FilmController extends Controller
     {
         return Film::whereRaw('LOWER(name) = ?', [strtolower($name)])->exists();
     }
+
+    /**
+     * This action was added to implement FR5 (film listing with associated actors)
+     * as a REST API endpoint. All films are retrieved via Eloquent with the
+     * actors relationship eagerly loaded so that a single JSON payload contains
+     * every film together with its related actors. This method is intended to be
+     * consumed by API clients (e.g. Postman) and therefore returns JSON only,
+     * without involving any Blade views.
+     */
+    public function index(): JsonResponse
+    {
+        try {
+            $films = Film::with('actors')
+                ->orderBy('year', 'desc')
+                ->get();
+
+            return response()->json($films);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                'error' => 'Database is temporarily unavailable. Please start MySQL (e.g. from XAMPP) and try again.',
+            ], 500);
+        }
+    }
 }
