@@ -64,6 +64,8 @@ Route::group(['prefix' => 'actorout'], function () {
         // that the selected decade is validated before the controller is executed.
         ->name('actors.byDecade')
         ->middleware('validateYear');
+    Route::get('actors/count', [ActorController::class, 'countActors'])
+        ->name('countActors');
 });
 
 // Create route (POST) – add film feature. Diagram flow: POST filmin/film.

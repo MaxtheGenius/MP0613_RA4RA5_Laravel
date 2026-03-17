@@ -90,4 +90,24 @@ class ActorController extends Controller
             ]);
         });
     }
+
+    /**
+     * This action was introduced to implement FR3 (actor count view) once the Actor
+     * module is operational. The total number of actors is retrieved using Eloquent
+     * ORM so that the database remains the single source of truth, and a dedicated
+     * view is returned so that the count can be displayed clearly and independently
+     * from the listing pages.
+     */
+    public function countActors(): View|\Illuminate\Http\RedirectResponse
+    {
+        return $this->handleDatabaseQuery(function () {
+            $title = 'Actor Count';
+            $count = Actor::count();
+
+            return view('actors.count', [
+                'title' => $title,
+                'count' => $count,
+            ]);
+        });
+    }
 }
