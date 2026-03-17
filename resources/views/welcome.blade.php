@@ -36,6 +36,8 @@
                     <a class="btn-apple m-2" href="{{ route('countFilms') }}">Count</a>
                     {{-- A hyperlink to the actors route was added here so that the actor listing is accessible from the welcome page; route('actors') is used so that the URL is kept in sync with the named route and the same styling as the other menu items is applied. --}}
                     <a class="btn-apple m-2" href="{{ route('actors') }}">All Actors</a>
+                    {{-- A hyperlink to the actor count view is added so that FR3 is accessible from the welcome page, mirroring the existing film count feature. --}}
+                    <a class="btn-apple m-2" href="{{ route('countActors') }}">Actors Count</a>
                 </div>
             </div>
         </div>
