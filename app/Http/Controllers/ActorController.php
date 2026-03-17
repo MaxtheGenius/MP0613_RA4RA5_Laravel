@@ -18,6 +18,8 @@ namespace App\Http\Controllers;
 use App\Models\Actor;
 // Carbon is imported so that decade date ranges can be built in a robust and readable way when filtering actors by decade (FR2).
 use Carbon\Carbon;
+// JsonResponse is imported so that the FR4 REST endpoint can declare a clear JSON return type.
+use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 
 class ActorController extends Controller
@@ -109,5 +111,48 @@ class ActorController extends Controller
                 'count' => $count,
             ]);
         });
+    }
+
+    /**
+     * This action was added to implement FR4 (actor deletion via REST API). It is
+     * exposed only through the API routes so that actors can be removed by ID from
+     * API clients such as Postman. A JSON response is always returned indicating
+     * the delete action and whether it was successful; invalid or non-existent
+     * IDs are handled gracefully so that no unhandled exceptions are exposed.
+     */
+    public function destroy(int $id): JsonResponse
+    {
+        try {
+            // The actor is located by ID using Eloquent so that deletion is performed through the ORM
+            // and the behaviour stays consistent with the rest of the Actor module.
+            $actor = Actor::find($id);
+
+            if (! $actor) {
+                // A 404 response is returned when the actor does not exist so that the API client is informed
+                // gracefully while still receiving the required JSON structure.
+                return response()->json([
+                    'action' => 'delete',
+                    'status' => false,
+                ], 404);
+            }
+
+            // The deletion is attempted on the found model so that the database record is removed by Eloquent.
+            // The boolean result is returned as "status" to match the FR4 acceptance criteria.
+            $deleted = (bool) $actor->delete();
+
+            return response()->json([
+                'action' => 'delete',
+                'status' => $deleted,
+            ], $deleted ? 200 : 500);
+        } catch (\Throwable $e) {
+            // Any unexpected failure is caught so that unhandled exceptions are not exposed to clients.
+            // A "status": false payload is returned so that the response format remains stable.
+            report($e);
+
+            return response()->json([
+                'action' => 'delete',
+                'status' => false,
+            ], 500);
+        }
     }
 }
