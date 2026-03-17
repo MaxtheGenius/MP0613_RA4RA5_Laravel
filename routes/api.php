@@ -4,6 +4,9 @@
  * @author Maxime Pol Marcet
  */
 
+// ActorController is imported so that the FR4 deletion endpoint can be mapped to a dedicated
+// controller action while keeping routing consistent with the rest of the project.
+use App\Http\Controllers\ActorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +24,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Actor deletion REST endpoint (FR4). This API route was introduced so that an actor can be
+// removed from the database by its ID using standard REST semantics. A DELETE request to
+// /api/actors/{id} is routed to ActorController@destroy, and a JSON payload is returned with:
+// - "action": "delete"
+// - "status": true|false (depending on the result)
+// This design was chosen so that the feature can be tested easily via Postman or any API client
+// without requiring any views.
+Route::delete('actors/{id}', [ActorController::class, 'destroy']);
