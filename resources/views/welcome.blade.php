@@ -29,15 +29,15 @@
             <div class="card-apple">
                 <h3 class="mb-4">Main Menu</h3>
                 <div class="d-flex flex-wrap justify-content-center gap-3">
-                    <a class="btn-apple m-2" href="{{ route('oldFilms') }}">Classic Films</a>
-                    <a class="btn-apple m-2" href="{{ route('newFilms') }}">New Releases</a>
-                    <a class="btn-apple m-2" href="{{ route('listFilms') }}">All Films</a>
-                    <a class="btn-apple m-2" href="{{ route('sortFilms') }}">Sorted by Year</a>
-                    <a class="btn-apple m-2" href="{{ route('countFilms') }}">Count</a>
+                    <x-button-apple class="m-2" :href="route('oldFilms')">Classic Films</x-button-apple>
+                    <x-button-apple class="m-2" :href="route('newFilms')">New Releases</x-button-apple>
+                    <x-button-apple class="m-2" :href="route('listFilms')">All Films</x-button-apple>
+                    <x-button-apple class="m-2" :href="route('sortFilms')">Sorted by Year</x-button-apple>
+                    <x-button-apple class="m-2" :href="route('countFilms')">Films Count</x-button-apple>
                     {{-- A hyperlink to the actors route was added here so that the actor listing is accessible from the welcome page; route('actors') is used so that the URL is kept in sync with the named route and the same styling as the other menu items is applied. --}}
-                    <a class="btn-apple m-2" href="{{ route('actors') }}">All Actors</a>
+                    <x-button-apple class="m-2" :href="route('actors')">All Actors</x-button-apple>
                     {{-- A hyperlink to the actor count view is added so that FR3 is accessible from the welcome page, mirroring the existing film count feature. --}}
-                    <a class="btn-apple m-2" href="{{ route('countActors') }}">Actors Count</a>
+                    <x-button-apple class="m-2" :href="route('countActors')">Actors Count</x-button-apple>
                 </div>
             </div>
         </div>
@@ -65,9 +65,9 @@
                             </select>
                         </div>
                         <div class="col-md-4 text-center mb-3">
-                            <button type="submit" class="btn-apple px-4 py-2" style="margin-top: 8px;">
+                            <x-button-apple type="submit" class="mt-2">
                                 Show Actors
-                            </button>
+                            </x-button-apple>
                         </div>
                     </div>
                 </form>
@@ -133,9 +133,9 @@
                     </div>
 
                     <div class="text-center mt-4">
-                        <button type="submit" class="btn-apple px-5 py-3" style="font-size: 1.1rem;">
+                        <x-button-apple type="submit">
                             Add Film
-                        </button>
+                        </x-button-apple>
                     </div>
                 </form>
             </div>

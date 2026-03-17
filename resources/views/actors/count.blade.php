@@ -12,22 +12,26 @@
 @section('title', $title)
 
 @section('content')
-    <div class="text-center mb-5">
-        <h1 class="mb-2">{{ $title }}</h1>
-        <p class="text-secondary mb-0">Total actors stored in the database</p>
-    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
 
-    <div class="card-apple text-center py-5">
-        <div class="display-4 font-weight-bold" style="letter-spacing: -1px;">
-            {{ $count }}
-        </div>
-        <div class="text-secondary mt-2">
-            actors
-        </div>
-    </div>
+            <h1 class="mb-5">{{ $title }}</h1>
 
-    <div class="text-center mt-5">
-        <a href="/" class="btn-apple">← Back to Home</a>
+            <div class="card-apple mb-5 py-5">
+                <p class="text-uppercase text-muted font-weight-bold mb-2" style="letter-spacing: 1px;">
+                    Total in Database
+                </p>
+                <div class="display-1 font-weight-bold text-dark mb-2" style="letter-spacing: -3px;">
+                    {{ $count }}
+                </div>
+                <p class="h5 text-secondary font-weight-normal">Actors available</p>
+            </div>
+
+            <x-button-apple href="/">
+                ← Back to Home
+            </x-button-apple>
+
+        </div>
     </div>
 @endsection
 

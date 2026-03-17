@@ -126,6 +126,6 @@
 
     {{-- A link back to the home page is provided so that the user can return to the welcome view without using the browser back button. --}}
     <div class="text-center mt-5">
-        <a href="/" class="btn-apple">← Back to Home</a>
+        <x-button-apple href="/">← Back to Home</x-button-apple>
     </div>
 @endsection

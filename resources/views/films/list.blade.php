@@ -115,6 +115,6 @@
     @endif
 
     <div class="text-center mt-5">
-        <a href="/" class="btn-apple">← Back to Home</a>
+        <x-button-apple href="/">← Back to Home</x-button-apple>
     </div>
 @endsection

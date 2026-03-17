@@ -18,9 +18,9 @@
                 <p class="h5 text-secondary font-weight-normal">Films available</p>
             </div>
 
-            <a href="/" class="btn-apple">
+            <x-button-apple href="/">
                 ← Back to Home
-            </a>
+            </x-button-apple>
 
         </div>
     </div>
